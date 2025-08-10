@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora ROI FieldArmy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom gradient backgrounds for better visual appeal */
+        .bg-gradient-custom-blue {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3730a3 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s infinite',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-custom-blue min-h-screen">
+    <div class="min-h-screen p-6">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <svg class="w-12 h-12 text-yellow-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <h1 class="text-4xl font-bold text-white">Calculadora ROI FieldArmy</h1>
+                </div>
+                <p class="text-xl text-blue-200">Descubra quanto sua empresa pode economizar com IA na gestão de campo</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Inputs -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-shadow">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                            Dados da Sua Operação
+                        </h2>
+                        
+                        <div class="space-y-4" id="inputsContainer">
+                            <div>
+                                <label class="block text-white text-sm font-medium mb-2">Número de Técnicos de Campo</label>
+                                <input type="number" id="numTecnicos" value="50" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            </div>
+
+                            <div>
+                                <label class="block text-white text-sm font-medium mb-2">Custo Técnico/Mês (R$)</label>
+                                <input type="number" id="custoTecnico" value="14500" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            </div>
+
+                            <div>
+                                <label class="block text-white text-sm font-medium mb-2">Chamados Atendidos/Mês</label>
+                                <input type="number" id="chamadosMes" value="1250" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            </div>
+
+                            <div>
+                                <label class="block text-white text-sm font-medium mb-2">Km Médio/Técnico/Mês</label>
+                                <input type="number" id="kmMedio" value="2500" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            </div>
+
+                            <div>
+                                <label class="block text-white text-sm font-medium mb-2">Custo Combustível/Litro (R$)</label>
+                                <input type="number" id="custoCombustivel" value="5.50" step="0.01" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            </div>
+
+                            <div>
+                                <label class="block text-white text-sm font-medium mb-2">Receita/Técnico/Mês (R$)</label>
+                                <input type="number" id="receitaPorTecnico" value="45000" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            </div>
+
+                            <div>
+                                <label class="block text-white text-sm font-medium mb-2">% Multas SLA (da receita)</label>
+                                <input type="number" id="multaSLA" value="2" step="0.1" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            </div>
+
+                            <div>
+                                <label class="block text-white text-sm font-medium mb-2">Taxa de Revisitas (%)</label>
+                                <input type="number" id="revisitas" value="15" step="0.1" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            </div>
+
+                            <div>
+                                <label class="block text-white text-sm font-medium mb-2">Horas Ociosas Técnico/Dia</label>
+                                <input type="number" id="horasOciosas" value="2" step="0.1" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <button onclick="calcularROI()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                🚀 Calcular ROI
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div id="resultsContainer" class="lg:col-span-2 space-y-6 hidden">
+                    <!-- KPIs Principais -->
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <!-- Custo Atual -->
+                        <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-6 text-white card-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                </svg>
+                                <span class="text-red-200 text-sm font-medium">CUSTO ATUAL</span>
+                            </div>
+                            <div class="text-3xl font-bold mb-2" id="custoAtualMensal">-</div>
+                            <div class="text-red-200 text-sm">por mês</div>
+                            <div class="text-xl font-semibold mt-2" id="custoAtualAnual">-</div>
+                        </div>
+
+                        <!-- Com SmartPlanner AI -->
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white card-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                <span class="text-blue-200 text-sm font-medium">COM SMARTPLANNER AI</span>
+                            </div>
+                            <div class="text-3xl font-bold mb-2" id="custoComIA">-</div>
+                            <div class="text-blue-200 text-sm" id="reducaoPercentual">-</div>
+                            <div class="text-xl font-semibold mt-2" id="custoComIAAnual">-</div>
+                        </div>
+
+                        <!-- Economia -->
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white card-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                </svg>
+                                <span class="text-green-200 text-sm font-medium">ECONOMIA</span>
+                            </div>
+                            <div class="text-3xl font-bold mb-2" id="economiaMensal">-</div>
+                            <div class="text-green-200 text-sm" id="economiaPercentual">-</div>
+                            <div class="text-xl font-semibold mt-2" id="economiaAnual">-</div>
+                        </div>
+                    </div>
+
+                    <!-- Desperdício Diário -->
+                    <div class="grid md:grid-cols-1 gap-4">
+                        <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-6 text-white card-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span class="text-red-200 text-sm font-medium">DESPERDÍCIO DIÁRIO</span>
+                            </div>
+                            <div class="text-4xl font-bold mb-2" id="desperdicioDiario">-</div>
+                            <div class="text-red-200 text-lg">jogados fora todos os dias</div>
+                        </div>
+                    </div>
+
+                    <!-- Detalhamento dos Custos -->
+                    <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-shadow">
+                        <h3 class="text-2xl font-bold text-white mb-6">Detalhamento dos Custos Atuais</h3>
+                        <p class="text-blue-200 mb-4" id="explicacaoReducao">Como chegamos na redução dos custos operacionais:</p>
+                        
+                        <div class="space-y-4" id="detalhesContainer">
+                            <!-- Detalhes serão preenchidos via JavaScript -->
+                        </div>
+
+                        <div class="mt-6 p-4 bg-orange-500/20 border border-orange-400/30 rounded-lg">
+                            <div class="text-center">
+                                <div class="text-orange-200 text-sm mb-2">Baseados com dados reais do mercado</div>
+                                <div class="text-white text-lg font-semibold" id="conclusaoIA">A IA elimina custos operacionais através de otimizações específicas</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Com FieldArmy SmartPlanner AI -->
+                    <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-shadow">
+                        <h3 class="text-2xl font-bold text-white mb-6">Com FieldArmy SmartPlanner AI</h3>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="p-4 bg-green-500/20 border border-green-400/30 rounded-lg">
+                                    <div class="text-green-400 font-medium mb-2">Economia Mensal</div>
+                                    <div class="text-3xl font-bold text-white" id="economiaMensalFinal">-</div>
+                                    <div class="text-green-200 text-sm" id="reducaoFinal">% de redução nos custos</div>
+                                </div>
+
+                                <div class="p-4 bg-blue-500/20 border border-blue-400/30 rounded-lg">
+                                    <div class="text-blue-400 font-medium mb-2">Economia Anual</div>
+                                    <div class="text-3xl font-bold text-white" id="economiaAnualFinal">-</div>
+                                    <div class="text-blue-200 text-sm">Impacto total em 12 meses</div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="p-4 bg-yellow-500/20 border border-yellow-400/30 rounded-lg">
+                                    <div class="text-yellow-400 font-medium mb-2">Aumento de Margem</div>
+                                    <div class="text-3xl font-bold text-white" id="aumentoMargem">-</div>
+                                    <div class="text-yellow-200 text-sm" id="margemDetalhes">-</div>
+                                </div>
+
+                                <div class="p-4 bg-purple-500/20 border border-purple-400/30 rounded-lg">
+                                    <div class="text-purple-400 font-medium mb-2">ROI & Payback</div>
+                                    <div class="text-3xl font-bold text-white" id="roiFinal">-</div>
+                                    <div class="text-purple-200 text-sm" id="paybackFinal">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Final -->
+            <div id="ctaContainer" class="mt-8 text-center hidden">
+                <div class="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-8 text-white card-shadow">
+                    <h3 class="text-3xl font-bold mb-4" id="tituloEficiencia">🚀 Sua Operação Pode Ser Mais Eficiente</h3>
+                    <p class="text-xl mb-6" id="textoComparativo">
+                        Você está gastando por mês. Com FieldArmy, gastaria apenas.
+                    </p>
+                    <div class="text-2xl font-bold" id="economiaDestaque">
+                        Economia por ano!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value || 0);
+        }
+
+        function formatPercent(value) {
+            return `${(value || 0).toFixed(1)}%`;
+        }
+
+        function calcularROI() {
+            // Capturar inputs
+            const numTecnicos = parseFloat(document.getElementById('numTecnicos').value) || 0;
+            const custoTecnico = parseFloat(document.getElementById('custoTecnico').value) || 0;
+            const chamadosMes = parseFloat(document.getElementById('chamadosMes').value) || 0;
+            const kmMedio = parseFloat(document.getElementById('kmMedio').value) || 0;
+            const custoCombustivel = parseFloat(document.getElementById('custoCombustivel').value) || 0;
+            const receitaPorTecnico = parseFloat(document.getElementById('receitaPorTecnico').value) || 0;
+            const multaSLA = parseFloat(document.getElementById('multaSLA').value) || 0;
+            const revisitas = parseFloat(document.getElementById('revisitas').value) || 0;
+            const horasOciosas = parseFloat(document.getElementById('horasOciosas').value) || 0;
+
+            // Custos base
+            const custoMensalOperacao = numTecnicos * custoTecnico;
+            const receitaMensal = numTecnicos * receitaPorTecnico;
+            const kmTotalMes = numTecnicos * kmMedio;
+
+            // CÁLCULO DAS INEFICIÊNCIAS ESPECÍFICAS
+            const horasPerdidas = custoMensalOperacao * 0.20;
+            const combustivelDesperdicio = (kmTotalMes * 0.15 * custoCombustivel) / 6;
+            const multasSLA = receitaMensal * (multaSLA / 100);
+            const revisitasEvitaveis = (chamadosMes * (revisitas / 100)) * 1800;
+            const horasExtras = numTecnicos * 20 * (custoTecnico / 220) * 1.5;
+            const custosOciosidade = numTecnicos * horasOciosas * (custoTecnico / 220) * 22;
+
+            // ECONOMIA COM IA (baseada em dados do mercado)
+            const economiaPorCategoria = {
+                horasPerdidas: horasPerdidas * 0.30,
+                combustivel: combustivelDesperdicio * 0.20,
+                multasSLA: multasSLA * 0.25,
+                revisitas: revisitasEvitaveis * 0.15,
+                horasExtras: horasExtras * 0.35,
+                ociosidade: custosOciosidade * 0.40
+            };
+
+            // Economia total mensal
+            const economiaMensal = Object.values(economiaPorCategoria).reduce((acc, val) => acc + val, 0);
+            const economiaDiaria = economiaMensal / 30;
+            const economiaAnual = economiaMensal * 12;
+
+            // Custos com IA
+            const custoComIA = custoMensalOperacao - economiaMensal;
+            const percentualReducao = (economiaMensal / custoMensalOperacao) * 100;
+
+            // Aumento de margem
+            const margemAtual = ((receitaMensal - custoMensalOperacao) / receitaMensal) * 100;
+            const margemComIA = ((receitaMensal - custoComIA) / receitaMensal) * 100;
+            const aumentoMargem = margemComIA - margemAtual;
+
+            // ROI e Payback
+            const mensalidadePorTecnico = 299;
+            const custoMensalFieldArmy = numTecnicos * mensalidadePorTecnico;
+            const economiaLiquida = economiaMensal - custoMensalFieldArmy;
+            const economiaLiquidaAnual = economiaLiquida * 12;
+            const investimentoAnual = custoMensalFieldArmy * 12;
+            const roi = investimentoAnual > 0 ? ((economiaLiquidaAnual / investimentoAnual) * 100) : 0;
+            const paybackDias = economiaLiquida > 0 ? Math.ceil((custoMensalFieldArmy / economiaLiquida) * 30) : 0;
+
+            // Atualizar interface
+            document.getElementById('custoAtualMensal').textContent = formatCurrency(custoMensalOperacao);
+            document.getElementById('custoAtualAnual').textContent = formatCurrency(custoMensalOperacao * 12) + '/ano';
+            
+            document.getElementById('custoComIA').textContent = formatCurrency(custoComIA);
+            document.getElementById('reducaoPercentual').textContent = `redução de ${formatPercent(percentualReducao)}`;
+            document.getElementById('custoComIAAnual').textContent = formatCurrency(custoComIA * 12) + '/ano';
+            
+            document.getElementById('economiaMensal').textContent = formatCurrency(economiaMensal);
+            document.getElementById('economiaPercentual').textContent = `${formatPercent(percentualReducao)} economizado`;
+            document.getElementById('economiaAnual').textContent = formatCurrency(economiaAnual) + '/ano';
+            
+            document.getElementById('desperdicioDiario').textContent = formatCurrency(economiaDiaria);
+
+            // Detalhamento
+            const detalhesContainer = document.getElementById('detalhesContainer');
+            detalhesContainer.innerHTML = `
+                <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
+                    <div>
+                        <span class="text-white font-medium">Horas Técnico Perdidas (20%)</span>
+                        <p class="text-blue-200 text-sm">Tempo improdutivo, deslocamentos desnecessários</p>
+                    </div>
+                    <span class="text-2xl font-bold text-red-400">${formatCurrency(horasPerdidas)}</span>
+                </div>
+                <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
+                    <div>
+                        <span class="text-white font-medium">Combustível - Rotas Ineficientes</span>
+                        <p class="text-blue-200 text-sm">15% dos km são desnecessários</p>
+                    </div>
+                    <span class="text-2xl font-bold text-red-400">${formatCurrency(combustivelDesperdicio)}</span>
+                </div>
+                <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
+                    <div>
+                        <span class="text-white font-medium">Multas por SLA Quebrado</span>
+                        <p class="text-blue-200 text-sm">${multaSLA}% da receita mensal</p>
+                    </div>
+                    <span class="text-2xl font-bold text-red-400">${formatCurrency(multasSLA)}</span>
+                </div>
+                <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
+                    <div>
+                        <span class="text-white font-medium">Revisitas (${revisitas}% dos chamados)</span>
+                        <p class="text-blue-200 text-sm">${chamadosMes} chamados/mês × ${revisitas}% = ${Math.round((chamadosMes * revisitas) / 100)} revisitas</p>
+                    </div>
+                    <span class="text-2xl font-bold text-red-400">${formatCurrency(revisitasEvitaveis)}</span>
+                </div>
+                <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
+                    <div>
+                        <span class="text-white font-medium">Horas Ociosas (${horasOciosas}h/dia por técnico)</span>
+                        <p class="text-blue-200 text-sm">Tempo improdutivo, esperas e deslocamentos</p>
+                    </div>
+                    <span class="text-2xl font-bold text-red-400">${formatCurrency(custosOciosidade)}</span>
+                </div>
+                <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
+                    <div>
+                        <span class="text-white font-medium">Horas Extras Desnecessárias</span>
+                        <p class="text-blue-200 text-sm">20h HE/técnico por mês (má gestão)</p>
+                    </div>
+                    <span class="text-2xl font-bold text-red-400">${formatCurrency(horasExtras)}</span>
+                </div>
+            `;
+
+            // Seção final
+            document.getElementById('economiaMensalFinal').textContent = formatCurrency(economiaMensal);
+            document.getElementById('reducaoFinal').textContent = `${formatPercent(percentualReducao)} de redução nos custos`;
+            document.getElementById('economiaAnualFinal').textContent = formatCurrency(economiaAnual);
+            document.getElementById('aumentoMargem').textContent = `+${formatPercent(aumentoMargem)}`;
+            document.getElementById('margemDetalhes').textContent = `De ${formatPercent(margemAtual)} para ${formatPercent(margemComIA)}`;
+            document.getElementById('roiFinal').textContent = formatPercent(roi);
+            document.getElementById('paybackFinal').textContent = `Payback em ${paybackDias} dias`;
+
+            // CTA
+            document.getElementById('tituloEficiencia').textContent = `🚀 Sua Operação Pode Ser ${formatPercent(percentualReducao)} Mais Eficiente`;
+            document.getElementById('textoComparativo').innerHTML = `
+                Você está gastando <span class="font-bold">${formatCurrency(custoMensalOperacao)}</span> por mês. 
+                Com FieldArmy, gastaria apenas <span class="font-bold">${formatCurrency(custoComIA)}</span>.
+            `;
+            document.getElementById('economiaDestaque').innerHTML = `
+                Economia: <span class="text-emerald-200">${formatCurrency(economiaAnual)}</span> por ano!
+            `;
+
+            document.getElementById('explicacaoReducao').textContent = `Como chegamos na redução de ${formatPercent(percentualReducao)} dos custos operacionais:`;
+            document.getElementById('conclusaoIA').textContent = `A IA elimina ${formatPercent(percentualReducao)} dos custos operacionais através de otimizações específicas`;
+
+            // Mostrar resultados
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            document.getElementById('ctaContainer').classList.remove('hidden');
+
+            // Scroll suave para os resultados
+            document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
