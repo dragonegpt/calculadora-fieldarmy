@@ -91,11 +91,6 @@
                                 <label class="block text-white text-sm font-medium mb-2">Taxa de Revisitas (%)</label>
                                 <input type="number" id="revisitas" value="15" step="0.1" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
                             </div>
-
-                            <div>
-                                <label class="block text-white text-sm font-medium mb-2">Horas Ociosas Técnico/Dia</label>
-                                <input type="number" id="horasOciosas" value="2" step="0.1" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                            </div>
                         </div>
 
                         <div class="mt-8">
@@ -255,7 +250,6 @@
             const receitaPorTecnico = parseFloat(document.getElementById('receitaPorTecnico').value) || 0;
             const multaSLA = parseFloat(document.getElementById('multaSLA').value) || 0;
             const revisitas = parseFloat(document.getElementById('revisitas').value) || 0;
-            const horasOciosas = parseFloat(document.getElementById('horasOciosas').value) || 0;
 
             // Custos base
             const custoMensalOperacao = numTecnicos * custoTecnico;
@@ -263,21 +257,30 @@
             const kmTotalMes = numTecnicos * kmMedio;
 
             // CÁLCULO DAS INEFICIÊNCIAS ESPECÍFICAS
+            
+            // 1. Horas técnico perdidas (20% do tempo em ineficiências - inclui ociosidade, deslocamentos, esperas)
             const horasPerdidas = custoMensalOperacao * 0.20;
-            const combustivelDesperdicio = (kmTotalMes * 0.15 * custoCombustivel) / 6;
+            
+            // 2. Combustível desperdiçado (15% dos km são excedentes)
+            const combustivelDesperdicio = (kmTotalMes * 0.15 * custoCombustivel) / 6; // Divisão por 6 = rendimento médio km/litro
+            
+            // 3. Multas por SLA quebrado
             const multasSLA = receitaMensal * (multaSLA / 100);
-            const revisitasEvitaveis = (chamadosMes * (revisitas / 100)) * 1800;
-            const horasExtras = numTecnicos * 20 * (custoTecnico / 220) * 1.5;
-            const custosOciosidade = numTecnicos * horasOciosas * (custoTecnico / 220) * 22;
+            
+            // 4. Revisitas evitáveis (baseado no número real de chamados)
+            const revisitasEvitaveis = (chamadosMes * (revisitas / 100)) * 1800; // Custo oportunidade por revisita
+            
+            // 5. Horas extras desnecessárias (20h HE por técnico)
+            const horasExtras = numTecnicos * 20 * (custoTecnico / 220) * 1.5; // 20h HE/técnico com adicional 50%
 
             // ECONOMIA COM IA (baseada em dados do mercado)
+            // Aplicamos diferentes % de eliminação baseados nos estudos
             const economiaPorCategoria = {
-                horasPerdidas: horasPerdidas * 0.30,
-                combustivel: combustivelDesperdicio * 0.20,
-                multasSLA: multasSLA * 0.25,
-                revisitas: revisitasEvitaveis * 0.15,
-                horasExtras: horasExtras * 0.35,
-                ociosidade: custosOciosidade * 0.40
+                horasPerdidas: horasPerdidas * 0.30, // 30% melhoria produtividade (IFS/Aquant)
+                combustivel: combustivelDesperdicio * 0.20, // 20% otimização rotas (DHL/UPS)
+                multasSLA: multasSLA * 0.25, // 25% melhoria SLA (TOMRA: 84%→96%)
+                revisitas: revisitasEvitaveis * 0.15, // 15% redução revisitas (Atheer: 15-25%)
+                horasExtras: horasExtras * 0.35 // 35% redução HE (melhor planejamento)
             };
 
             // Economia total mensal
@@ -323,7 +326,7 @@
                 <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
                     <div>
                         <span class="text-white font-medium">Horas Técnico Perdidas (20%)</span>
-                        <p class="text-blue-200 text-sm">Tempo improdutivo, deslocamentos desnecessários</p>
+                        <p class="text-blue-200 text-sm">Tempo improdutivo, deslocamentos, esperas e ociosidade</p>
                     </div>
                     <span class="text-2xl font-bold text-red-400">${formatCurrency(horasPerdidas)}</span>
                 </div>
@@ -347,13 +350,6 @@
                         <p class="text-blue-200 text-sm">${chamadosMes} chamados/mês × ${revisitas}% = ${Math.round((chamadosMes * revisitas) / 100)} revisitas</p>
                     </div>
                     <span class="text-2xl font-bold text-red-400">${formatCurrency(revisitasEvitaveis)}</span>
-                </div>
-                <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
-                    <div>
-                        <span class="text-white font-medium">Horas Ociosas (${horasOciosas}h/dia por técnico)</span>
-                        <p class="text-blue-200 text-sm">Tempo improdutivo, esperas e deslocamentos</p>
-                    </div>
-                    <span class="text-2xl font-bold text-red-400">${formatCurrency(custosOciosidade)}</span>
                 </div>
                 <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
                     <div>
