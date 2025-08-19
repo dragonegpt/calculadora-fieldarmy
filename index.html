@@ -40,9 +40,9 @@
                 <p class="text-xl text-blue-200">Descubra quanto sua empresa pode economizar com IA na gestão de campo</p>
             </div>
 
-            <div class="grid lg:grid-cols-3 gap-8">
+            <div id="mainContainer" class="flex justify-center lg:block">
                 <!-- Inputs -->
-                <div class="lg:col-span-1">
+                <div id="inputSection" class="w-full max-w-md lg:max-w-none transition-all duration-700 ease-in-out">
                     <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 card-shadow">
                         <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
                             <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,7 +102,8 @@
                 </div>
 
                 <!-- Results -->
-                <div id="resultsContainer" class="lg:col-span-2 space-y-6 hidden">
+                <div id="resultsContainer" class="hidden space-y-6">
+                    <!-- Grid será aplicado dinamicamente via JavaScript -->
                     <!-- KPIs Principais -->
                     <div class="grid md:grid-cols-3 gap-4">
                         <!-- Custo Atual -->
@@ -390,8 +391,20 @@
             document.getElementById('resultsContainer').classList.remove('hidden');
             document.getElementById('ctaContainer').classList.remove('hidden');
 
+            // Aplicar layout desktop após cálculo
+            const mainContainer = document.getElementById('mainContainer');
+            const inputSection = document.getElementById('inputSection');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            // Aplicar grid layout desktop
+            mainContainer.className = 'grid lg:grid-cols-3 gap-8';
+            inputSection.className = 'lg:col-span-1 w-full transition-all duration-700 ease-in-out';
+            resultsContainer.className = 'lg:col-span-2 space-y-6';
+
             // Scroll suave para os resultados
-            document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+            }, 300);
         }
     </script>
 </body>
