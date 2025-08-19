@@ -268,19 +268,23 @@
             const multasSLA = receitaMensal * (multaSLA / 100);
             
             // 4. Revisitas evitáveis (baseado no número real de chamados)
-            const revisitasEvitaveis = (chamadosMes * (revisitas / 100)) * 1800; // Custo oportunidade por revisita
+            const custoTotalRevisitas = (chamadosMes * (revisitas / 100)) * 1800; // Custo total das revisitas
             
-            // 5. Horas extras desnecessárias (20h HE por técnico)
-            const horasExtras = numTecnicos * 20 * (custoTecnico / 220) * 1.5; // 20h HE/técnico com adicional 50%
+            // 5. Horas extras desnecessárias (1h/dia × 22 dias = 22h/mês por técnico)
+            const jornadaNormal = 176; // 8h/dia × 22 dias
+            const horasExtrasPorTecnico = 22; // 1h/dia × 22 dias
+            const valorHoraNormal = custoTecnico / jornadaNormal;
+            const valorHoraExtra = valorHoraNormal * 1.5; // +50% adicional HE Brasil
+            const horasExtras = numTecnicos * horasExtrasPorTecnico * valorHoraExtra;
 
             // ECONOMIA COM IA (baseada em dados do mercado)
             // Aplicamos diferentes % de eliminação baseados nos estudos
             const economiaPorCategoria = {
-                horasPerdidas: horasPerdidas * 0.30, // 30% melhoria produtividade (IFS/Aquant)
-                combustivel: combustivelDesperdicio * 0.20, // 20% otimização rotas (DHL/UPS)
-                multasSLA: multasSLA * 0.25, // 25% melhoria SLA (TOMRA: 84%→96%)
-                revisitas: revisitasEvitaveis * 0.15, // 15% redução revisitas (Atheer: 15-25%)
-                horasExtras: horasExtras * 0.35 // 35% redução HE (melhor planejamento)
+                horasPerdidas: horasPerdidas * 0.30, // 30% melhoria produtividade (25-40% faixa mercado)
+                combustivel: combustivelDesperdicio * 0.15, // 15% otimização rotas (10-20% faixa mercado)
+                multasSLA: multasSLA * 0.15, // 15% melhoria SLA (10-20% faixa mercado)
+                revisitas: custoTotalRevisitas * 0.22, // 22% redução revisitas (20-25% faixa mercado)
+                horasExtras: horasExtras * 0.20 // 20% redução HE (15-25% faixa mercado)
             };
 
             // Economia total mensal
@@ -320,43 +324,43 @@
             
             document.getElementById('desperdicioDiario').textContent = formatCurrency(economiaDiaria);
 
-            // Detalhamento
+            // Detalhamento - CORRIGIDO PARA MOSTRAR APENAS AS ECONOMIAS
             const detalhesContainer = document.getElementById('detalhesContainer');
             detalhesContainer.innerHTML = `
                 <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
                     <div>
-                        <span class="text-white font-medium">Horas Técnico Perdidas (20%)</span>
-                        <p class="text-blue-200 text-sm">Tempo improdutivo, deslocamentos, esperas e ociosidade</p>
+                        <span class="text-white font-medium">Horas Técnico Perdidas (30% melhoria)</span>
+                        <p class="text-blue-200 text-sm">Redução de tempo improdutivo e ociosidade</p>
                     </div>
-                    <span class="text-2xl font-bold text-red-400">${formatCurrency(horasPerdidas)}</span>
+                    <span class="text-2xl font-bold text-green-400">${formatCurrency(economiaPorCategoria.horasPerdidas)}</span>
                 </div>
                 <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
                     <div>
-                        <span class="text-white font-medium">Combustível - Rotas Ineficientes</span>
-                        <p class="text-blue-200 text-sm">15% dos km são desnecessários</p>
+                        <span class="text-white font-medium">Combustível - Otimização de Rotas (15%)</span>
+                        <p class="text-blue-200 text-sm">Economia com rotas mais eficientes</p>
                     </div>
-                    <span class="text-2xl font-bold text-red-400">${formatCurrency(combustivelDesperdicio)}</span>
+                    <span class="text-2xl font-bold text-green-400">${formatCurrency(economiaPorCategoria.combustivel)}</span>
                 </div>
                 <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
                     <div>
-                        <span class="text-white font-medium">Multas por SLA Quebrado</span>
-                        <p class="text-blue-200 text-sm">${multaSLA}% da receita mensal</p>
+                        <span class="text-white font-medium">Melhoria SLA (15% redução multas)</span>
+                        <p class="text-blue-200 text-sm">Menos multas por descumprimento de SLA</p>
                     </div>
-                    <span class="text-2xl font-bold text-red-400">${formatCurrency(multasSLA)}</span>
+                    <span class="text-2xl font-bold text-green-400">${formatCurrency(economiaPorCategoria.multasSLA)}</span>
                 </div>
                 <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
                     <div>
-                        <span class="text-white font-medium">Revisitas (${revisitas}% dos chamados)</span>
-                        <p class="text-blue-200 text-sm">${chamadosMes} chamados/mês × ${revisitas}% = ${Math.round((chamadosMes * revisitas) / 100)} revisitas</p>
+                        <span class="text-white font-medium">Redução de Revisitas (22%)</span>
+                        <p class="text-blue-200 text-sm">22% das revisitas são desnecessárias</p>
                     </div>
-                    <span class="text-2xl font-bold text-red-400">${formatCurrency(revisitasEvitaveis)}</span>
+                    <span class="text-2xl font-bold text-green-400">${formatCurrency(economiaPorCategoria.revisitas)}</span>
                 </div>
                 <div class="flex justify-between items-center p-4 bg-white/10 rounded-lg">
                     <div>
-                        <span class="text-white font-medium">Horas Extras Desnecessárias</span>
-                        <p class="text-blue-200 text-sm">20h HE/técnico por mês (má gestão)</p>
+                        <span class="text-white font-medium">Redução Horas Extras (20%)</span>
+                        <p class="text-blue-200 text-sm">Melhor planejamento reduz HE desnecessárias</p>
                     </div>
-                    <span class="text-2xl font-bold text-red-400">${formatCurrency(horasExtras)}</span>
+                    <span class="text-2xl font-bold text-green-400">${formatCurrency(economiaPorCategoria.horasExtras)}</span>
                 </div>
             `;
 
